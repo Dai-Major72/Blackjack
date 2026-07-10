@@ -1,0 +1,189 @@
+from modules import Paquet52, ValeurCarte
+from time import sleep
+
+Paquet = Paquet52()
+save_file_path = "./save.txt"
+
+def Save(Joueur):
+    print("Save..")
+    player_save = {
+        "nom" : Joueur.nom,
+        "argent" : Joueur.argent
+    }
+    player_save = str(player_save)[1:-1]
+    save_lign = f"{Joueur.nom} = {player_save}\n"
+    InSave = False
+    with open(save_file_path, "rt") as save:
+        cache = save.read()
+        for line in cache.splitlines():
+            if Joueur.nom == line.split(" =")[0]:
+                cache = cache.replace(line, save_lign[0:-1])
+                with open(save_file_path, "w") as saveW:
+                    saveW.write(cache)
+                InSave = True
+                break
+
+        if InSave != True:
+            with open(save_file_path, "a") as saveA:
+                saveA.write(save_lign)
+
+def Pioche():
+    carte = Paquet[-1]
+    Paquet.pop()
+    return carte
+
+def Points(Joueur):
+    pts = 0
+    As_Count = 0
+    for carte in Joueur.cartes:
+        if ValeurCarte(carte) == 1:
+            As_Count += 1
+        else:
+            pts += ValeurCarte(carte)
+    for As in range(As_Count):
+        if pts + 11 > 21:
+            pts += 1
+        else: pts += 11
+    return pts
+
+def Bust(Joueur):
+
+    if Points(Joueur) > 21:
+        return True
+    else: 
+        return False
+def Init_Player():
+    global Bob, Dealer
+    Bob = Joueur()
+    Dealer = Dealer()
+
+def Start():
+    Bob.Hit()
+    Dealer.Hit()
+    Bob.Hit()
+
+def CardReset():
+    Bob.cartes = []
+    Dealer.cartes = []
+
+def Get_Player_Money(Joueur):
+    with open(save_file_path, "r") as save:
+        for line in save:
+            if Joueur.nom == line.split(" = ")[0]:
+                return int(line.split(" ")[-1])
+        return 1000
+
+class Joueur:
+    
+    def __init__(self):
+        self.nom = str(input("Nom :\n"))
+        self.argent = Get_Player_Money(self)
+        self.cartes = []
+        
+    def Hit(self):
+        self.cartes.append(Pioche())
+
+    def Cartes(self):
+        print(f"{self.nom}\n{self.cartes} = {Points(self)}\n")
+
+    def Balance(self):
+        print(f"Argent [{self.argent}]")
+        
+    def Mise(self):
+        if self.argent <= 0:
+            print("Vous êtes fauché !")
+            print("Faveur de la banque, prenez 1000")
+            self.argent = 1000
+            Save(self)
+        self.mise = 0
+        while self.mise == 0:
+            self.Balance()
+            self.mise = input("Mise :")
+            if self.mise.isdigit() == False:
+                self.mise = 0
+            else: self.mise = int(self.mise)
+        self.argent -= self.mise
+        self.Balance()
+
+    def Win(self):
+        self.argent += self.mise * 2
+        Dealer.argent -= self.mise
+        
+    def Egalite(self):
+        self.argent += self.mise
+        
+class Dealer(Joueur):
+
+    def __init__(self):
+        self.argent = 999999
+        self.nom = "Dealer"
+        self.cartes = []
+
+    def Cartes(self):
+        super().Cartes()
+    def Hit(self):
+        super().Hit()
+
+    def Win(self, joueur):
+        self.argent += joueur.mise
+        
+while True: #Jeu
+
+    Init_Player()
+    
+    while True: #Tour de jeu
+
+        Save(Bob)
+        Bob.Mise()
+        Paquet = Paquet52()
+        Start()
+
+        while Bust(Bob) != True: #Tour du joueur
+
+            Dealer.Cartes()
+            Bob.Cartes()
+            g = str(input("Hit ? O/n"))
+            if g == "":
+                Bob.Hit()
+            else:
+                print(f"{Bob.nom} reste !")
+                break
+            
+            if Bust(Bob):
+                print(f"{Bob.nom} a Bust !")
+                    
+        while Bust(Dealer) != True and Bust(Bob) != True: #Tour du Dealer
+
+            Dealer.Hit()
+            Dealer.Cartes()
+            sleep(1)
+            if Points(Dealer) >= 17:
+                if Bust(Dealer):
+                    print("Le Dealer a Bust !")
+                break         
+
+        if Bust(Bob):
+            print("Le Dealer gagne !")
+            Dealer.Win(Bob)
+
+        elif Bust(Dealer):
+            print(f"{Bob.nom} gagne !")
+            Bob.Win()
+            
+        else:
+            if Points(Bob) > Points(Dealer):
+                print(f"{Bob.nom} gagne aux pts !")
+                Bob.Win()
+            elif Points(Bob) < Points(Dealer):
+                print("Le Dealer gagne aux pts")
+                Dealer.Win(Bob)
+            else:
+                print("Egalité !")
+                Bob.Egalite()
+                
+        CardReset()
+#A faire :
+# - Faire un affichage propre (pygame un jour ?)
+#
+# - Reset de l'argent du Dealer ? Ou système de banque infinie ?
+# - Optimiser le code (fonctions, et boucle principale)
