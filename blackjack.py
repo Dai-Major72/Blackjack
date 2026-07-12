@@ -1,23 +1,25 @@
+#!/bin/python3
+
 from modules import Paquet52, ValeurCarte
 from time import sleep
+from os import environ as env
+from pathlib import Path
 
 Paquet = Paquet52()
-save_file_path = "./save.txt"
+save_file_path = env['HOME'] + "/.blackjack_save"
+if Path(save_file_path).is_file() == False:
+    with open(save_file_path, "x") as saveCreate:
+        saveCreate.write("Blackjack Bank\n")
 
 def Save(Joueur):
     print("Save..")
-    player_save = {
-        "nom" : Joueur.nom,
-        "argent" : Joueur.argent
-    }
-    player_save = str(player_save)[1:-1]
-    save_lign = f"{Joueur.nom} = {player_save}\n"
+    player_save = f"{Joueur.nom} = argent : {Joueur.argent}\n"
     InSave = False
     with open(save_file_path, "rt") as save:
         cache = save.read()
         for line in cache.splitlines():
             if Joueur.nom == line.split(" =")[0]:
-                cache = cache.replace(line, save_lign[0:-1])
+                cache = cache.replace(line, player_save)
                 with open(save_file_path, "w") as saveW:
                     saveW.write(cache)
                 InSave = True
@@ -25,7 +27,7 @@ def Save(Joueur):
 
         if InSave != True:
             with open(save_file_path, "a") as saveA:
-                saveA.write(save_lign)
+                saveA.write(player_save)
 
 def Pioche():
     carte = Paquet[-1]
@@ -52,6 +54,7 @@ def Bust(Joueur):
         return True
     else: 
         return False
+
 def Init_Player():
     global Bob, Dealer
     Bob = Joueur()
@@ -145,6 +148,7 @@ while True: #Jeu
             g = str(input("Hit ? O/n"))
             if g == "":
                 Bob.Hit()
+                Bob.Cartes()
             else:
                 print(f"{Bob.nom} reste !")
                 break
