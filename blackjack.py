@@ -2,8 +2,10 @@
 
 from modules import Paquet52, ValeurCarte
 from time import sleep
+import sys
 from os import environ as env
 from pathlib import Path
+
 
 Paquet = Paquet52()
 save_file_path = env['HOME'] + "/.blackjack_save"
@@ -56,14 +58,31 @@ def Bust(Joueur):
         return False
 
 def Init_Player():
-    global Bob, Dealer
+    global Bob
     Bob = Joueur()
-    Dealer = Dealer()
 
 def Start():
     Bob.Hit()
     Dealer.Hit()
     Bob.Hit()
+
+def menu(Joueur):
+
+
+    while True:
+        m = str(input(f"{Joueur.Balance()}\n[1] Miser\n[2] Changer de joueur\n[3] Quitter\n"))
+        if m == "1":
+            Bob.Mise()
+            break
+        elif m == "2":
+            Bob.exit()
+            Dealer.exit()
+            return "Back"
+        elif m == "3":
+            print("A bientot :)")
+            sys.exit()
+
+
 
 def CardReset():
     Bob.cartes = []
@@ -90,7 +109,7 @@ class Joueur:
         print(f"{self.nom}\n{self.cartes} = {Points(self)}\n")
 
     def Balance(self):
-        print(f"Argent [{self.argent}]")
+        return f"Argent [{self.argent}]"
         
     def Mise(self):
         if self.argent <= 0:
@@ -100,13 +119,13 @@ class Joueur:
             Save(self)
         self.mise = 0
         while self.mise == 0:
-            self.Balance()
+            print(self.Balance())
             self.mise = input("Mise :")
             if self.mise.isdigit() == False:
                 self.mise = 0
             else: self.mise = int(self.mise)
         self.argent -= self.mise
-        self.Balance()
+        print(self.Balance())
 
     def Win(self):
         self.argent += self.mise * 2
@@ -114,7 +133,9 @@ class Joueur:
         
     def Egalite(self):
         self.argent += self.mise
-        
+
+    def exit(self):
+        del self
 class Dealer(Joueur):
 
     def __init__(self):
@@ -129,7 +150,12 @@ class Dealer(Joueur):
 
     def Win(self, joueur):
         self.argent += joueur.mise
-        
+
+    def exit(self):
+        del self
+
+Dealer = Dealer()
+
 while True: #Jeu
 
     Init_Player()
@@ -137,7 +163,8 @@ while True: #Jeu
     while True: #Tour de jeu
 
         Save(Bob)
-        Bob.Mise()
+        if menu(Bob) == "Back":
+            break
         Paquet = Paquet52()
         Start()
 
@@ -145,8 +172,11 @@ while True: #Jeu
 
             Dealer.Cartes()
             Bob.Cartes()
-            g = str(input("Hit ? O/n"))
-            if g == "":
+            g = None
+            while g not in ["O", "", "n"]:
+                g = str(input("Hit ? O/n"))
+
+            if g == "O" or g == "":
                 Bob.Hit()
                 Bob.Cartes()
             else:
