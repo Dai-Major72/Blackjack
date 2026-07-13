@@ -14,7 +14,7 @@ else
   sudo mkdir -p $path
 fi
 
-sudo cp blackjack.py modules.py $path
+sudo cp blackjack.py bj_cards.py $path
 
 if [[ -d $bin_path ]]; then
   echo "Création fichier bin"
