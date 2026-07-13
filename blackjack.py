@@ -193,6 +193,7 @@ while True: #Jeu
                 break
             
             if is_bust(Bob):
+                table_screen(Bob, Dealer)
                 print(f"\n{Bob.nom} busted !")
                 sleep(1)
                     
