@@ -22,6 +22,8 @@ The Dealer cannot go higher than 21, and will stop drawing cards at 17.
 If the dealer Bust, and you didn't, you win
  If your score's higher than the Dealer's, you win
 
+Double : For the first draw, you have the choice to draw only one card but double your bet
+
 Card values : 
 - From 2 to 10 cards values are worth their numbers
 - Faces are worth 10 (from jack to king)

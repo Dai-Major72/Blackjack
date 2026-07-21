@@ -1,6 +1,7 @@
 import random
 def paquet_52():
-    
+    """Créer un paquet de 52 cartes avec les 4 couleurs"""
+
     global figures
     figures = ["Ace", "Jack", "Queen", "King"]
     paquet = (list(range(2,11)) + figures) * 4
@@ -20,9 +21,12 @@ def pioche(paquet):
     carte = paquet[-1]
     paquet.pop()
     return carte
-#Transforme les cartes du paquet en valeur exploitable
+
 
 def card_value(carte):
+    """Tranforme une liste de carte avec couleur en valeur exploitable.
+    En considérant que les cartes de 2 à 10 valent leur chiffre, que l'As vaut 1 et quel es figures valent 10
+    Ex : "8 ♦" devient un int de 8 """
     valeur = None
     if carte[0:-2] in figures:
         if "Ace" in carte:

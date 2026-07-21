@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 paquet = paquet_52()
+
 save_file_path = os.environ['HOME'] + "/.blackjack_save"
 if Path(save_file_path).is_file() == False:
     with open(save_file_path, "x") as saveCreate:
@@ -52,12 +53,20 @@ def init_player():
     global Bob
     Bob = Joueur()
 
+def split_check(Joueur):
+    valeur = None
+    for carte in Joueur.cartes:
+        if valeur == carte.split(" ")[0] :
+            return True
+        valeur = carte.split(" ")[0]
+
 def start():
     Bob.hit()
     Dealer.hit()
     Bob.hit()
 
-def clean():
+def clean(time_before_sleep=0):
+    sleep(time_before_sleep)
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def menu(Joueur):
@@ -83,6 +92,36 @@ def table_screen(Joueur, Dealer):
     print(f"{Joueur.balance()}\nBet [{Joueur.mise}]")
     Dealer.show_cards()
     Joueur.show_cards()
+
+def turn_menu(Joueur):
+    while True:
+        table_screen(Bob, Dealer)
+        if len(Joueur.cartes) <= 2:
+            m = str(input("[1] Hit     [2] Stay    [3] Double "))
+        else:
+            m = str(input("[1] Hit     [2] Stay "))
+
+        if m == "1":
+            Bob.hit()
+            table_screen(Bob, Dealer)
+            break
+        elif m == "2":
+            print(f"{Joueur.nom} stays !")
+            sleep(2)
+            return False
+        elif m == "3":
+            if len(Joueur.cartes) <= 2:
+                if Bob.double_bet():
+                    Bob.hit()
+                    table_screen(Bob, Dealer)
+                    print("You double your bet")
+                    print(f"{Joueur.nom} can't hit anymore")
+                    sleep(2)
+            else:
+                continue
+            return False
+        table_screen(Bob,Dealer)
+    return True
 
 def card_reset():
     Bob.cartes = []
@@ -111,27 +150,37 @@ class Joueur:
 
     def balance(self):
         return f"Money [{self.argent}]"
-        
+
     def bet(self):
+        self.mise = 0
         if self.argent <= 0:
             print("You are broke !")
             print("Banks favor, take 1000")
             self.argent = 1000
             save(self)
-        self.mise = 0
         while True:
+
             print(self.balance())
-            self.mise = input("Bet : ")
-            if self.mise.isdigit() == False:
+            try:
+                self.mise = int(input("Bet : "))
+            except ValueError:
+                print("That is not a correct bet")
+                clean(2)
                 continue
-            elif int(self.mise) > self.argent:
+            if self.mise > self.argent:
                 print("You don't have enough money")
+                clean(2)
                 continue
             else:
-                self.mise = int(self.mise)
                 break
         self.argent -= self.mise
-        print(self.balance())
+
+    def double_bet(self):
+        while self.argent >= self.mise * 2:
+            self.argent -= self.mise
+            self.mise += self.mise
+            return True
+        return False
 
     def win(self):
         self.argent += self.mise * 2
@@ -177,25 +226,13 @@ while True: #Jeu
         paquet = paquet_52()
         start()
 
-        while is_bust(Bob) != True: #Tour du joueur
+        table_screen(Bob,Dealer)
+        while turn_menu(Bob): #Tour du joueur
 
-            table_screen(Bob,Dealer)
-
-            g = None
-            while g not in ["Y", "", "n"]:
-                g = str(input("Hit ? Y/n "))
-
-            if g == "Y" or g == "":
-                Bob.hit()
-            else:
-                print(f"\n{Bob.nom} stays !")
-                sleep(2)
-                break
-            
             if is_bust(Bob):
-                table_screen(Bob, Dealer)
                 print(f"\n{Bob.nom} busted !")
                 sleep(1)
+                break
                     
         while is_bust(Dealer) != True and is_bust(Bob) != True: #Tour du Dealer
 
