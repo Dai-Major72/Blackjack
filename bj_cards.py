@@ -22,7 +22,8 @@ def pioche(paquet):
     paquet.pop()
     return carte
 
-
+def card_name(carte):
+    return str(carte[0:-2])
 def card_value(carte):
     """Tranforme une liste de carte avec couleur en valeur exploitable.
     En considérant que les cartes de 2 à 10 valent leur chiffre, que l'As vaut 1 et quel es figures valent 10

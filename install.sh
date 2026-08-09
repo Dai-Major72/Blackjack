@@ -14,7 +14,7 @@ else
   sudo mkdir -p $path
 fi
 
-sudo cp blackjack.py bj_cards.py $path
+sudo cp blackjack.py bj_cards.py save_manager.py $path
 
 if [[ -e $bin_path/blacjack ]]; then
   echo "Bin file already exist"
@@ -24,4 +24,4 @@ fi
 
 ln -s $path/blackjack.py $bin_path/blackjack
 
-sudo chmod +x $path/blackjack.py
+sudo chmod +x $path/blackjack.py && echo "Blackjack successfully installed, type 'blackjack' to start to play :)"
