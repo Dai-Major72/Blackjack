@@ -1,4 +1,4 @@
-#from random import randint
+import random
 
 faces = ["Jack", "Queen", "King","Ace"]
 
@@ -14,30 +14,28 @@ def deck_54(ace_is_one=False,jokers=False,faces_value=0):
     def value(card):
 
         if card in faces:
-            values = [11,12,13,1 if ace_is_one else 14][faces.index(card)]
-            if not faces_value : return values
+            if not faces_value : return [11,12,13,1 if ace_is_one else 14][faces.index(card)]
             elif card != "Ace" : return faces_value
             else : return 1 if ace_is_one else 14
 
         else: return int(card)
 
-    hand = list(range(2,11)) + faces
+    blank = list(range(2,11)) + faces
     deck = {}
     for logo in colors.values():
-        for card in hand:
+        for card in blank:
             deck.update({f"{card} {logo}":value(card)})
     if jokers : deck.update({"Joker 1":15, "Joker 2":15})
     return deck
 
+def draw(deck):
+    #Return a card and remove it from the deck
+    return deck.popitem()
 
+def shuffle(deck):
+    # Shuffle the given deck.
+    card_list = list(deck.items())
+    random.shuffle(card_list)
+    return dict(card_list)
 
-
-    """Return a dict of a 54 (or 52) card deck. Every color.
-    Card value : 2 < 10 < J < Q < K < A
-    Dict entrys are : 'card name + color':card_value_as_int
-
-    Args : ace_is_one : if True, ace is weaker than 2. Default Ace is the strongest card
-           jokers : define if jokers will be in the deck. if set to false, return a 52 cards deck.
-           faces_value : if set to an int,  all faces will be equals with this value Default faces values are 11, 12 and 13
-    """
-print(deck_54(True,True,0))
+print(draw(shuffle(deck_54())))
