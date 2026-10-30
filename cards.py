@@ -1,4 +1,5 @@
 #from random import randint
+
 faces = ["Jack", "Queen", "King","Ace"]
 
 colors = {
@@ -8,11 +9,11 @@ colors = {
     "club":"\u2663"
 }
 
-def deck_54(ace_is_one=False,jokers=False,faces_value=False):
+def deck_54(ace_is_one=False,jokers=False,faces_value=0):
 
     def value(card):
         if card in faces and faces_value: return faces_value
-        elif card in faces: return [14,11,12,13][faces.index(card)]
+        elif card in faces: return [1 if ace_is_one else 11,12,13,14][faces.index(card)]
         else: return int(card)
 
     hand = list(range(2,11)) + faces
@@ -20,6 +21,7 @@ def deck_54(ace_is_one=False,jokers=False,faces_value=False):
     for logo in colors.values():
         for card in hand:
             deck.update({f"{card} {logo}":value(card)})
+    if jokers : deck.update({"Joker 1":15, "Joker 2":15})
     return deck
 
 
@@ -33,4 +35,4 @@ def deck_54(ace_is_one=False,jokers=False,faces_value=False):
            jokers : define if jokers will be in the deck. if set to false, return a 52 cards deck.
            faces_value : if set to an int,  all faces will be equals with this value Default faces values are 11, 12 and 13
     """
-print(deck_54())
+print(deck_54(True,True,12))
