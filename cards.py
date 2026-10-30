@@ -12,8 +12,13 @@ colors = {
 def deck_54(ace_is_one=False,jokers=False,faces_value=0):
 
     def value(card):
-        if card in faces and faces_value: return faces_value
-        elif card in faces: return [1 if ace_is_one else 11,12,13,14][faces.index(card)]
+
+        if card in faces:
+            values = [11,12,13,1 if ace_is_one else 14][faces.index(card)]
+            if not faces_value : return values
+            elif card != "Ace" : return faces_value
+            else : return 1 if ace_is_one else 14
+
         else: return int(card)
 
     hand = list(range(2,11)) + faces
@@ -35,4 +40,4 @@ def deck_54(ace_is_one=False,jokers=False,faces_value=0):
            jokers : define if jokers will be in the deck. if set to false, return a 52 cards deck.
            faces_value : if set to an int,  all faces will be equals with this value Default faces values are 11, 12 and 13
     """
-print(deck_54(True,True,12))
+print(deck_54(True,True,0))
