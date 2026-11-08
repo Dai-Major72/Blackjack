@@ -10,6 +10,3 @@ class Player:
         self.save_file = sm.save(player_class_name=self.name)
         (self.save_file.create(), self.save_file.write({"money" : base_money})) if not self.save_file.do_exist() else print("Player found")
         self.money = player_money(self.save_file) if self.save_file.do_exist() else base_money
-
-Joueur1 = Player()
-print(Joueur1.money)
