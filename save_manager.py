@@ -1,23 +1,23 @@
 from pathlib import Path
-def create_save_file(save_file_path, save_file_title="Save File"):
-    global save_file
-    save_file = save_file_path
-    if Path(save_file_path).is_file() == False:
-        with open(save_file_path, "x") as saveCreate:
-            saveCreate.write(f"{save_file_title}\n\n")
+import json, os
 
-def save(joueur="Major", *values):
-    in_save = False
-    with open(save_file, "rt") as save:
-        cache = save.read()
-        for line in cache.splitlines():
-            if joueur == line.split(" =")[0]:
-                cache = cache.replace(line, f"{joueur} = {values}\n")
-                with open(save_file, "w") as saveW:
-                    saveW.write(cache)
-                in_save = True
-                break
+class save:
 
-        if not in_save:
-            with open(save_file, "a") as saveA:
-                saveA.write(f"{joueur} = {values}")
+    def __init__(self,player_class_name="Default",path = os.environ['HOME']):
+        self.abs_path = f"{path}/.{player_class_name}.json" #Create the absolute path for the file
+
+    def do_exist(self): #Return boolean if file exist or not
+        return Path(self.abs_path).is_file()
+
+    def create(self): #Create teh save file
+            with open(self.abs_path, "x"):...
+
+    def write(self, data):
+        if not self.do_exist() : #Check first if the file is already there
+            raise FileNotFoundError("Player not found, did you called create() for this player ?")
+        with open(self.abs_path, "w") as file:
+            json.dump(data, file)
+
+    def fetch(self):    #Fetch all the data written in the file.
+        with open (self.abs_path, "r") as file:
+            return dict(json.load(file))

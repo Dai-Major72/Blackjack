@@ -1,6 +1,6 @@
 #!/bin/python3
 
-from bj_cards import paquet_52, card_value, card_name, rule, pioche
+import cards
 import save_manager as sm
 from time import sleep
 import sys
