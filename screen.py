@@ -7,34 +7,17 @@ def clear(time=0):
     os.system('clear')
 
 def menu():
-
-    def up():
-        return keyboard.is_pressed('up')
-
-    def change_sel(menu_list, dir):
-        for o in menu_list:
-            if dir : menu_list["*"]
-
+    opt = 0
     while True:
-        opt = {
-            "1":"*",
-            "2":...,
-            "3":...
-        }
+
         menu = f"""
-        [{opt["1"]}] Nouveau
-        [{opt["2"]}] Jouer
-        [{opt["3"]}] Quitter
+        [{"*" if opt == 0 else ""}] Nouveau
+        [{"*" if opt == 1 else ""}] Jouer
+        [{"*" if opt == 2 else ""}] Quitter
         """
-        select_opt = str(1)
-
         print(menu)
-        up = keyboard.is_pressed('up')
-        down = keyboard.is_pressed('down')
 
-        if up :
-            opt.update([])
+        if keyboard.is_pressed('up') and opt != 0: opt -= 1
+        if keyboard.is_pressed('down') and opt != 2 : opt += 1
 
 menu()
-
-#blblb
