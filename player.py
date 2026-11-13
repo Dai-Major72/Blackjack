@@ -1,4 +1,3 @@
-from blackjack import Dealer
 import save_manager as sm
 import cards
 
@@ -16,18 +15,21 @@ class Default_player:
             self.class_save_file.create(); self.class_save_file.write(default_save)
             print("Player found")
         self.money = player_money(self.class_save_file)
-        self.cards = []
+        self.cards = {}
         self.bet = 0
 
 
     def hit(self,deck):
-        self.cards.append(cards.draw(deck))
+        self.cards.update({cards.draw(deck)})
 
-class Default_Dealer(Default_player):
+    def show_cards(self): #Return card list in hand
+        return list(self.cards.keys())
+
+    def sum_cards(self): # Return sum of cards in hand
+        return sum(self.cards.values())
+
+class Default_dealer(Default_player):
 
     def __init__(self):
         self.name = "Dealer"
-        self.cards = []
-
-    def hit(self,deck):
-        super().hit(deck)
+        self.cards = {}
