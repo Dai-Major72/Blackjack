@@ -9,15 +9,17 @@ def clear(time=0):
 def menu():
     opt = 0
     while True:
-
+        clear()
         menu = f"""
         [{"*" if opt == 0 else ""}] Nouveau
         [{"*" if opt == 1 else ""}] Jouer
         [{"*" if opt == 2 else ""}] Quitter
         """
-        print(menu)
+        print(menu, opt)
 
-        if keyboard.is_pressed('up') and opt != 0: opt -= 1
-        if keyboard.is_pressed('down') and opt != 2 : opt += 1
-
+        sleep(0.08)
+        if keyboard.is_pressed('up'): opt -= 1
+        if opt < 0: opt = 2
+        if keyboard.is_pressed('down') : opt += 1
+        if opt > 2: opt = 0
 menu()
